@@ -23,10 +23,10 @@ image: docker:24.0.5
     - docker info
     - docker login $CI-REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   script:
-    - docker build -t $CI_REGISTRY/vibia/test:latest .
-    - docker push $CI_REGISTRY/vibia/test:latest
+    - docker build -t $CI_REGISTRY/$CI-REGISTRY_USER/test:latest .
+    - docker push $CI_REGISTRY/$CI-REGISTRY_USER/test:latest
 
 default:
-  - image $CI_REGISTRY/vibia/test:latest
+  - image $CI_REGISTRY/$CI-REGISTRY_USER/test:latest
 
   
