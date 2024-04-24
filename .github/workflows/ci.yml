@@ -1,30 +1,40 @@
-stages:
-  - docker
-  - linting
-  - build
+name: Upload Python Package
 
-services:
-  - docker:24.0.5-dind
+on:
+  push:
+    branches:
+      - main
 
-variables:
-  DOCKER_TLS_CERTDIR: "/certs"
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-build-docker:
-  image: docker:24.0.5
-  stage: docker
-  only:
-    changes:
-      - poetry.lock
-      - pyproject.toml
-      - env.yml
-      - Dockerfile
-      - .github/workflows/ci.yml
-  before_script:
-    - docker info
-    - docker login $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
-  script:
-    - docker build -t $CI_REGISTRY/$CI_REGISTRY_USER/test:latest .
-    - docker push $CI_REGISTRY/$CI_REGISTRY_USER/test:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-default:
-  - image $CI_REGISTRY/$CI_REGISTRY_USER/test:latest
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          source $HOME/.poetry/env
+
+      - name: Install project dependencies
+        run: poetry install
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/$GITHUB_REPOSITORY:latest
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
