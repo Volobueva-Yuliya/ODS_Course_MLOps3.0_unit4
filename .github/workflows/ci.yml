@@ -18,7 +18,7 @@ image: docker:24.0.5
     - pyproject.toml
     - env.yml
     - Dockerfile
-    - .github/workflow/ci.yml
+    - .github/workflows/ci.yml
   before_scripts:
     - docker info
     - docker login $CI-REGISTRY_USER -p $CI_REGISTRY_PASSWORD
