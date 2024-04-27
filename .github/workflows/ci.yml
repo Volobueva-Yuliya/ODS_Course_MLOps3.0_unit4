@@ -39,12 +39,12 @@ jobs:
         with:
           driver-opts: image=moby/buildkit:v0.11.0
 
-      - name: Build
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/yuliya-volobueva/ods_course_mlops3.0_unit4:latest --push .
+          tags: ghcr.io/yuliya-volobueva/ods_course_mlops3.0_unit4:latest
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
