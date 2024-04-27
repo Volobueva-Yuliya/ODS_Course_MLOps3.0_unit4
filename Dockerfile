@@ -1,7 +1,7 @@
 FROM mambaorg/micromamba
 
 WORKDIR /app
-COPY .github/workflows/ci.yml /app/env.yml
+COPY .github/workflows/ci.yml /app/ci.yml
 RUN micromamba create -f ci.yml
 COPY pyproject.toml /app/pyproject.toml
 COPY poetry.lock /app/poetry.lock
